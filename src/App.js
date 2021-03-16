@@ -1,25 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import PrivateRoute from "./components/RotasPrivadas";
 
-function App() {
+import Inicio from "./components/Inicio";
+import Login from "./components/Login";
+import NovoUsuario from "./components/NovoUsuario";
+import NaoEncontrado from "./components/NaoEncontrado"
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <BrowserRouter>
+        {/* Switch garante que apenas uma rota será renderizada exclusivamente */ }
+        <Switch> 
+          <PrivateRoute exact path="/" component={Inicio} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/novousuario" component={NovoUsuario} />
+          <Route path="*" component={NaoEncontrado} />          
+        </Switch>
+      </BrowserRouter>
   );
-}
+};
 
 export default App;
