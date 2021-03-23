@@ -1,18 +1,18 @@
 import React, { useEffect } from "react";
 
 
-const Inicio = () => {
+const MenuInicial = () => {
     useEffect(() => {        
-        document.title = 'Página não encontrada';
+        document.title = 'Menu Inicial';
       }, []);
   
   return (
     <div>
       <h1>
-        Página não encontrada
+        Seja bem vindo!
       </h1>
       </div>
      )   
 };
 
-export default Inicio;
+export default MenuInicial;
