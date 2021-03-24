@@ -45,7 +45,7 @@ const Login = () => {
         if(data.access_token) {
           localStorage.setItem("access_token", data.access_token)
           localStorage.setItem("usuario", JSON.stringify(data.usuario))
-          history.push("/menu")
+          history.push("/inicio")
       }
       })
       .catch(function (error) {
