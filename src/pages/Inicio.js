@@ -10,7 +10,7 @@ const Inicio = () => {
 
   return (
     <div>
-      <Container fluid className="p-0">
+      <Container fluid className='p-0'>
         <Cabecalho />
         <Rodape />
       </Container>

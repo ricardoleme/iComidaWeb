@@ -1,8 +1,10 @@
-# Front End do Projeto Dog Walker
+# Front End do Projeto iComida
 
-npx create-react-app frontdogweb
-cd frontdogweb
-npm i react-bootstrap bootstrap --save
-npm i react-router-dom --save
-npm i axios --save
+npx create-react-app icomidaweb
+cd icomidaweb
+npm i react-bootstrap bootstrap 
+npm i react-router-dom 
+npm i react-bootstrap-table-next
+npm i react-bootstrap-table2-paginator
+
 Fetch ou Axios? https://blog.logrocket.com/axios-or-fetch-api/
