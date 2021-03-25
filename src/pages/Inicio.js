@@ -1,21 +1,18 @@
 import React, { useEffect } from "react";
-import Cabecalho from './Cabecalho'
-import Rodape from './Rodape'
-import Container from 'react-bootstrap/Container'
+
 
 const Inicio = () => {
-  useEffect(() => {
-    document.title = 'Menu Inicial';
-  }, []);
-
+    useEffect(() => {        
+        document.title = 'iComida';
+      }, []);
+  
   return (
     <div>
-      <Container fluid className='p-0'>
-        <Cabecalho />
-        <Rodape />
-      </Container>
-    </div>
-  )
+      <h1>
+        Bem vindo ao iComida
+      </h1>
+      </div>
+     )   
 };
 
 export default Inicio;
