@@ -7,8 +7,7 @@ import Col from 'react-bootstrap/Col'
 import Spinner from 'react-bootstrap/Spinner'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import FormControl from 'react-bootstrap/FormControl'
-import FormCheck from 'react-bootstrap/FormCheck'
+import Alert from 'react-bootstrap/Alert'
 
 import { BACKEND, opcoesPaginacao } from '../constants'
 import MensagemModal from '../components/MensagemModal'
@@ -19,7 +18,8 @@ import paginationFactory from 'react-bootstrap-table2-paginator'
 import { MdRestaurantMenu, MdDeleteForever, MdModeEdit, MdStorage, MdWeb, MdSave } from 'react-icons/md'
 
 const Categorias = () => {
-  const valorInicial = { _id: null, nome: '', status: 'inativo' }
+  const valorInicial = { nome: '', status: true }
+  const [erros, setErros] = useState({})
   const [categoria, setCategoria] = useState(valorInicial)
   const [categorias, setCategorias] = useState([])
   const [carregandoCategorias, setCarregandoCategorias] = useState(false)
@@ -27,6 +27,7 @@ const Categorias = () => {
   const [confirmaExclusao, setConfirmaExclusao] = useState(false)
   const token = localStorage.getItem('access_token')
   const { _id, nome, status } = categoria
+
   /* DataTable */
   const colunas = [{
     dataField: 'nome',
@@ -73,39 +74,60 @@ const Categorias = () => {
         })
         .catch(function (error) {
           console.error('Houve um problema ao obter as categorias: ' + error.message)
+          setErros({ 'dados': 'Não foi possível obter os dados das Categorias!' })
         })
       setCarregandoCategorias(false)
     }
   }, [])
 
   const alteraDadosCategoria = e => {
-    setCategoria({ ...categoria, [e.target.name]: e.target.value });
+    setCategoria({ ...categoria, [e.target.name]: e.target.value })
+    setErros({})
   };
 
-  async function salvarCategoria() {
-    const metodo = categoria._id === null ? 'POST' : 'PUT'
-    alert(token)
-    setSalvandoCategorias(true)
-    let url = `${BACKEND}/categorias`
-    await fetch(url, {
-      mode: 'cors',
-      method: metodo,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'access-token': token
-      },
-      body: JSON.stringify({ categoria })
-    }).then(response => response.json())
-      .then(data => {
-        console.log(data)
-      })
-      .catch(function (error) {
-        console.error('Houve um problema ao salvar a categoria: ' + error.message);
-      })
-
-    setSalvandoCategorias(false)
+  async function salvarCategoria(e) {
+    e.preventDefault()
+    // get our new errors
+    const novosErros = validaErrosCategoria()
+    // Existe algum erro no array?
+    if (Object.keys(novosErros).length > 0) {
+      // Sim, temos erros!
+      setErros(novosErros)
+    } else {
+      const metodo = categoria._id === null ? 'POST' : 'PUT'
+      categoria.status = categoria.status === true ? 'ativo': 'inativo'
+      setSalvandoCategorias(true)
+      let url = `${BACKEND}/categorias`
+      await fetch(url, {
+        mode: 'cors',
+        method: metodo,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'access-token': token
+        },
+        body: JSON.stringify(categoria)
+      }).then(response => response.json())
+        .then(data => {
+          console.log(data)
+          setCategoria(valorInicial)
+        })
+        .catch(function (error) {
+          console.error('Houve um problema ao salvar a categoria: ' + error.message);
+        })
+      setSalvandoCategorias(false)
+    }
   }
+  const validaErrosCategoria = () => {
+    const { nome } = categoria
+    const novosErros = {}
+    // Validação no Nome
+    if (!nome || nome === '') novosErros.nome = 'O nome não pode ser vazio!'
+    else if (nome.length > 30) novosErros.nome = 'O nome informado é muito longo!'
+    else if (nome.length < 3) novosErros.nome = 'O nome informado é muito curto!'
+    return novosErros
+  }
+
 
   return (
     <div>
@@ -120,30 +142,46 @@ const Categorias = () => {
           <Col xs={12} lg={6} className="pl-4">
             {/* Formulário */}
             <h4><MdWeb /> Cadastro das Categorias</h4>
-            <Form>
+            <Form method="POST">
               <Form.Group controlId="nomeCategoria">
                 <Form.Label>Nome da Categoria</Form.Label>
-                <FormControl
+                <Form.Control
                   name="nome"
                   placeholder="Ex: Churrascaria"
                   onChange={alteraDadosCategoria}
                   value={nome}
+                  isInvalid={!!erros.nome}
                 />
-
+                <Form.Control.Feedback type='invalid'>
+                  {erros.nome}
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group controlId="status">
-                <FormCheck type="checkbox" label="Ativo" name="status"
-                  onChange={alteraDadosCategoria}
-                  checked={status === 'ativo'} />
+                <Form.Check type="checkbox" label="Ativo" name="status"
+                  onChange={(e) => setCategoria({
+                    ...categoria,
+                    [e.target.name]: e.target.checked
+                  })}
+                  checked={status} />
               </Form.Group>
+
               <Button variant="primary" type="submit" title="Salvar o registro"
-                onClick={() => salvarCategoria()}>
+                onClick={(e) => salvarCategoria(e)}>
                 {salvandoCategorias ? <Spinner animation="border" size="sm" /> : <MdSave />} Salvar
                </Button>
             </Form>
           </Col>
           <Col xs={12} lg={6}>
             {/* Listagem */}
+
+            {erros.dados &&
+              <Alert variant='danger'>
+                <Alert.Heading>❌Ops... Ocorreu um erro</Alert.Heading>
+                <p> Houve um problema ao tentar conectar ao servidor.<br></br>
+                    Verifique se o <a href={BACKEND} target="_blank">servidor</a> está no ar!
+                </p>
+              </Alert>
+            }
             {carregandoCategorias &&
               <>
                 <Spinner animation="grow" size="sm" />
