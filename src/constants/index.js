@@ -1,3 +1,3 @@
-import {BACKEND, opcoesPaginacao} from "./config"
+import {BACKEND} from "./config"
 
-export { BACKEND, opcoesPaginacao }
+export { BACKEND }
