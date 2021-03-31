@@ -12,6 +12,9 @@ import Image from 'react-bootstrap/Image'
 import ProgressBar from 'react-bootstrap/ProgressBar'
 import Table from 'react-bootstrap/Table'
 
+//React Time Ago - npm i react-time-ago (lembrar de adicionar imports ao index.js)
+import ReactTimeAgo from 'react-time-ago'
+
 import { BACKEND } from '../constants'
 import MensagemModal from '../components/MensagemModal'
 import Aviso from '../components/Aviso'
@@ -43,8 +46,6 @@ const Categorias = () => {
   const [progressoImagem, setProgressoImagem] = useState(0)
   const token = localStorage.getItem('access_token')
   const { nome, status } = categoria
-
-
 
   useEffect(() => {
     document.title = 'Cadastro de Categorias'
@@ -173,6 +174,7 @@ const Categorias = () => {
 
   function TabelaCategorias() {
     //Exemplo de Tabela com ordenação: https://codesandbox.io/s/table-sorting-example-ur2z9?from-embed
+    //Componente mais profissional: https://react-bootstrap-table.github.io/react-bootstrap-table2/
     const dados = categorias
     return (
       <Table striped bordered hover>
@@ -182,6 +184,7 @@ const Categorias = () => {
             <th>Nome</th>
             <th>Status</th>
             <th>Ícone</th>
+            <th>Inclusão</th>
             <th>Opções</th>
           </tr>
         </thead>
@@ -190,17 +193,23 @@ const Categorias = () => {
             <tr key={item._id}>
               <td>{item.nome}</td>
               <td>{item.status}</td>
-              <td> <Image src={`${BACKEND}/${item.foto.path}`} thumbnail width="50" height="50" title={item.foto.originalname} alt={item.foto.originalname} /></td>
-              <td><Button variant="outline-danger" title="Remover o registro" onClick={() => {
-                setCategoria(item)
-                setConfirmaExclusao(true)
-              }}>
+              <td> <Image src={`${BACKEND}/${item.foto.path}`} thumbnail 
+                          width="50" height="50" title={item.foto.originalname} 
+                          alt={item.foto.originalname} /></td>
+              <td><ReactTimeAgo date={item.createdAt} /></td>
+              <td>
+                <Button variant="outline-danger" title="Remover o registro" onClick={() => {
+                        setCategoria(item)
+                        setConfirmaExclusao(true)
+                }}>
                 <MdDeleteForever />
-              </Button>
-          &nbsp;
-          <Button variant="outline-primary" title="Editar o registro" onClick={() => setCategoria(item)}>
+                </Button>
+                &nbsp;
+                <Button variant="outline-primary" title="Editar o registro" 
+                        onClick={() => setCategoria(item)}>
                   <MdModeEdit />
-                </Button></td>
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>
